@@ -1,3 +1,7 @@
+"""
+This code blocks blocking your screen by pushing windows and changing piority
+"""
+
 # imports
 from tkinter import END, Tk, Toplevel, Label, Button, Text, Entry 
 
