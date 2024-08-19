@@ -2,5 +2,5 @@
 Cheat on Epoptes with Easy Python code
 
 ### Authors
-Code: MarcelM
-Other: MarcelM
+- Code: MarcelM
+- Other: MarcelM
