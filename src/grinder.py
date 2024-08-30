@@ -38,8 +38,9 @@ class Grinder:
     # main grinder function
     def grind(self):
         window = Toplevel(panel)
-        window.geometry("0x0")
+        window.geometry("0x0+0+0")
         window.title("Grinder")
+        window.attributes("-topmost", True)
 
         if interval.get() == "0":
             window.forget(window)
@@ -77,7 +78,10 @@ grinder_title = Label(panel, text="Windows Grinder", fg="#f00", font=("Arial", 1
 grinder_switch = Button(panel, text="DISABLED", bg="#f00", command=grinder.switch)
 label_interval = Label(panel, text="Interval:")
 interval = Entry(panel, width=10)
-output = Text(panel, width=60, height=22, bg="#000", fg="#fff")
+output = Text(panel, width=60, height=18, bg="#000", fg="#fff") # 22 → 18
+#terminal_title = Label(panel, text="Terminal:")
+#terminal = Text(panel, width=60, height=1, bg="#000", fg="#fff")
+#terminal.config(insertbackground="white")
 
 # ui showing
 grinder_title.pack()
@@ -86,6 +90,8 @@ label_interval.pack()
 interval.pack()
 interval.insert(END, "300")
 output.pack(pady=20) 
+#terminal_title.pack()
+#terminal.pack()
 
 # mainloop
 panel.mainloop()
