@@ -9,6 +9,8 @@ from tkinter import END, Tk, Toplevel, Label, Button, Text, Entry
 panel = Tk()
 panel.title("Control Panel")
 panel.geometry("500x500")
+panel.maxsize(500, 500)
+panel.minsize(500, 500)
 
 # main class (all funcs)
 class Grinder:
@@ -79,9 +81,64 @@ grinder_switch = Button(panel, text="DISABLED", bg="#f00", command=grinder.switc
 label_interval = Label(panel, text="Interval:")
 interval = Entry(panel, width=10)
 output = Text(panel, width=60, height=18, bg="#000", fg="#fff") # 22 → 18
-#terminal_title = Label(panel, text="Terminal:")
-#terminal = Text(panel, width=60, height=1, bg="#000", fg="#fff")
-#terminal.config(insertbackground="white")
+terminal_title = Label(panel, text="Terminal:")
+terminal = Entry(panel, width=80, bg="#000", fg="#fff")
+terminal.config(insertbackground="white")
+
+def terminal_enter(event):
+    event_value = terminal.get()
+    if event_value == "help":
+        output.insert(END, 
+"""[CMD]   | TERMINAL: Command list:
+        |           help    list of all commands
+        |           help -> <command>     help of given command
+        |           enable    enable grinder
+        |           enable -> <interval>    enable grinder with given interval
+        |           disable     disable grinder
+        |           interval -> <value>   sets interval to given value
+        |           incognito     enable incognito mode
+""")
+    elif event_value.startswith("help -> "):
+        if event_value[8:] == "help":
+            output.insert(END, "[CMD]   | TERMINAL: help     list of all commands\n        |           help -> <command> help for given command\n")
+        elif event_value[8:] == "enable":
+            output.insert(END, "[CMD]   | TERMINAL: enable     enable grinder\n        |           enable -> <interval> enable grinder with given interval\n")
+        elif event_value[8:] == "disable":
+            output.insert(END, "[CMD]   | TERMINAL: disable     disable grinder\n")
+        elif event_value[8:] == "interval":
+            output.insert(END, "[CMD]   | TERMINAL: interval -> <value>     sets interval to given value\n")
+        elif event_value[8:] == "incognito":
+            output.insert(END, "[CMD]   | TERMINAL: incognito     enable incognito mode\n")
+        else:
+            output.insert(END, f"[ERROR] | TERMINAL: Invalid command value >>> {event_value[8:]}\n")
+    elif event_value == "enable":
+        grinder_switch["text"] = "ENABLED"
+        grinder_switch["bg"] = "#0f0"
+        grinder.enable_grinder()
+    elif event_value.startswith("enable -> "):
+        interval.delete(0, END)
+        interval.insert(END, f"{event_value[10:]}")
+        grinder_switch["text"] = "ENABLED"
+        grinder_switch["bg"] = "#0f0"
+        grinder.enable_grinder()    
+    elif event_value == "disable":
+        grinder_switch["text"] = "DISABLED"
+        grinder_switch["bg"] = "#f00"
+    elif event_value == "interval":
+        output.insert(END, "[CMD]   | TERMINAL: interval -> <value>     sets interval to given value\n")
+    elif event_value.startswith("interval -> "):
+        interval.delete(0, END)
+        interval.insert(END, f"{event_value[12:]}")
+        output.insert(END, "[CMD]   | TERMINAL: Succesfully changed interval value.\n")
+    elif event_value == "incognito":
+        panel.minsize(0, 0)
+        panel.geometry("0x0+0+0")
+        panel.wm_state('iconic')
+        output.insert(END, "[CMD]   | TERMINAL: Succesfully changed mode to incognito.\n")
+    else:
+        output.insert(END, f"[ERROR] | TERMINAL: Cannot find command \"{event_value}\"\n")
+    terminal.delete(0, END)
+terminal.bind("<Return>", terminal_enter)
 
 # ui showing
 grinder_title.pack()
@@ -90,8 +147,8 @@ label_interval.pack()
 interval.pack()
 interval.insert(END, "300")
 output.pack(pady=20) 
-#terminal_title.pack()
-#terminal.pack()
+terminal_title.pack()
+terminal.pack()
 
 # mainloop
 panel.mainloop()
