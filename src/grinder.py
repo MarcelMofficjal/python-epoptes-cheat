@@ -87,8 +87,12 @@ terminal.config(insertbackground="white")
 
 def terminal_enter(event):
     event_value = terminal.get()
-    if event_value == "help":
-        output.insert(END, 
+
+    args = event_value.split()
+
+    if args[0] == "help":
+        if len(args) == 1:
+            output.insert(END, 
 """[CMD]   | TERMINAL: Command list:
         |           help    list of all commands
         |           help -> <command>     help of given command
@@ -98,43 +102,61 @@ def terminal_enter(event):
         |           interval -> <value>   sets interval to given value
         |           incognito     enable incognito mode
 """)
-    elif event_value.startswith("help -> "):
-        if event_value[8:] == "help":
-            output.insert(END, "[CMD]   | TERMINAL: help     list of all commands\n        |           help -> <command> help for given command\n")
-        elif event_value[8:] == "enable":
-            output.insert(END, "[CMD]   | TERMINAL: enable     enable grinder\n        |           enable -> <interval> enable grinder with given interval\n")
-        elif event_value[8:] == "disable":
-            output.insert(END, "[CMD]   | TERMINAL: disable     disable grinder\n")
-        elif event_value[8:] == "interval":
-            output.insert(END, "[CMD]   | TERMINAL: interval -> <value>     sets interval to given value\n")
-        elif event_value[8:] == "incognito":
-            output.insert(END, "[CMD]   | TERMINAL: incognito     enable incognito mode\n")
         else:
-            output.insert(END, f"[ERROR] | TERMINAL: Invalid command value >>> {event_value[8:]}\n")
-    elif event_value == "enable":
-        grinder_switch["text"] = "ENABLED"
-        grinder_switch["bg"] = "#0f0"
-        grinder.enable_grinder()
-    elif event_value.startswith("enable -> "):
-        interval.delete(0, END)
-        interval.insert(END, f"{event_value[10:]}")
-        grinder_switch["text"] = "ENABLED"
-        grinder_switch["bg"] = "#0f0"
-        grinder.enable_grinder()    
-    elif event_value == "disable":
-        grinder_switch["text"] = "DISABLED"
-        grinder_switch["bg"] = "#f00"
-    elif event_value == "interval":
-        output.insert(END, "[CMD]   | TERMINAL: interval -> <value>     sets interval to given value\n")
-    elif event_value.startswith("interval -> "):
-        interval.delete(0, END)
-        interval.insert(END, f"{event_value[12:]}")
-        output.insert(END, "[CMD]   | TERMINAL: Succesfully changed interval value.\n")
-    elif event_value == "incognito":
-        panel.minsize(0, 0)
-        panel.geometry("0x0+0+0")
-        panel.wm_state('iconic')
-        output.insert(END, "[CMD]   | TERMINAL: Succesfully changed mode to incognito.\n")
+            if args[1] == "->":
+            #elif event_value.startswith("help -> "):
+                if event_value[8:] == "help":
+                    output.insert(END, "[CMD]   | TERMINAL: help     list of all commands\n        |           help -> <command> help for given command\n")
+                elif event_value[8:] == "enable":
+                    output.insert(END, "[CMD]   | TERMINAL: enable     enable grinder\n        |           enable -> <interval> enable grinder with given interval\n")
+                elif event_value[8:] == "disable":
+                    output.insert(END, "[CMD]   | TERMINAL: disable     disable grinder\n")
+                elif event_value[8:] == "interval":
+                    output.insert(END, "[CMD]   | TERMINAL: interval -> <value>     sets interval to given value\n")
+                elif event_value[8:] == "incognito":
+                    output.insert(END, "[CMD]   | TERMINAL: incognito     enable incognito mode\n")
+                else:
+                    output.insert(END, f"[ERROR] | TERMINAL: Invalid command value >>> {event_value[8:]}\n")
+            else:
+                output.insert(END, f"[ERROR] | TERMINAL: Invalid parameter >>> {args[1]}")
+    elif args[0] == "enable":
+        if len(args) == 1:
+            grinder_switch["text"] = "ENABLED"
+            grinder_switch["bg"] = "#0f0"
+            grinder.enable_grinder()
+        else:
+            if args[1] == "->":
+                interval.delete(0, END)
+                interval.insert(END, f"{event_value[10:]}")
+                grinder_switch["text"] = "ENABLED"
+                grinder_switch["bg"] = "#0f0"
+                grinder.enable_grinder()  
+            else:
+                output.insert(END, f"[ERROR] | TERMINAL: Invalid parameter >>> {args[1]}")
+    elif args[0] == "disable":
+        if len(args) == 1:
+            grinder_switch["text"] = "DISABLED"
+            grinder_switch["bg"] = "#f00"
+        else:
+            output.insert(END, f"[ERROR] | TERMINAL: Invalid parameter >>> {args[1]}")
+    elif args[0] == "interval":
+        if len(args) == 1:
+            output.insert(END, "[CMD]   | TERMINAL: interval -> <value>     sets interval to given value\n")
+        else:
+            if args[1] == "->":
+                interval.delete(0, END)
+                interval.insert(END, f"{event_value[12:]}")
+                output.insert(END, "[CMD]   | TERMINAL: Succesfully changed interval value.\n")
+            else:
+                output.insert(END, f"[ERROR] | TERMINAL: Invalid parameter >>> {args[1]}")
+    elif args[0] == "incognito":
+        if len(args) == 1:
+            panel.minsize(0, 0)
+            panel.geometry("0x0+0+0")
+            panel.wm_state('iconic')
+            output.insert(END, "[CMD]   | TERMINAL: Succesfully changed mode to incognito.\n")
+        else:
+            output.insert(END, f"[ERROR] | TERMINAL: Invalid parameter >>> {args[1]}")
     else:
         output.insert(END, f"[ERROR] | TERMINAL: Cannot find command \"{event_value}\"\n")
     terminal.delete(0, END)
